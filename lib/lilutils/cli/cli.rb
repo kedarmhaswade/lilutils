@@ -27,7 +27,7 @@ module CLI
 
   class Yes
     include OptionHelper
-    
+
     def !
       NO
     end
@@ -49,10 +49,12 @@ module CLI
   class YesNo
     DEFAULT_PROMPT = "Do you want to proceed?"
 
-    def initialize(default_option=YES, prompt=DEFAULT_PROMPT, strict=true)
+    def initialize(default_option=YES, prompt=DEFAULT_PROMPT, strict=true, istream=$stdin, ostream=$stdout)
       @default_option = default_option
       @prompt         = prompt
       @strict         = strict
+      @istream        = istream
+      @ostream        = ostream
       @other_options  = []
       @other_options << !default_option
     end
@@ -79,27 +81,29 @@ module CLI
 
     # the whole point is subclasses get this for free
     def run
-      print "#{@prompt} #{format}"
-      response = gets.chomp!
+      @ostream.print "#{@prompt} #{format}"
+      response = @istream.gets.chomp!
       chosen   = valid_response? response
       if @strict
         until chosen
-          print "\nSorry, I don't understand #{response}, #{@prompt} #{format}"
-          response = gets.chomp!
+          @ostream.print "\nSorry, I don't understand #{response}, #{@prompt} #{format}"
+          response = @istream.gets.chomp!
           chosen   = valid_response? response
         end
       else
-        chosen = @other_options[0] # some random option will be returned, works as expected in YesNo case
+        chosen = @default_option # when not strict, any key => default option
       end
       chosen
     end
   end
 
   class YesNoCancel < YesNo
-    def initialize(default_option=YES, prompt=DEFAULT_PROMPT, strict=true)
+    def initialize(default_option=YES, prompt=DEFAULT_PROMPT, strict=true, istream=$stdin, ostream=$stdout)
       @default_option = default_option
       @prompt = prompt
       @strict = strict
+      @istream        = istream
+      @ostream        = ostream
       @other_options = YNC - [@default_option]
     end
   end
