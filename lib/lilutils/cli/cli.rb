@@ -1,17 +1,19 @@
 #!/usr/bin/env ruby
+class Module
+  # suggested by Brian Candler
+  def simple_name
+    name.gsub(/^.*::/,'')
+  end
+end
 
 module CLI
-  module SymbolProvider
+  module OptionHelper
     def to_sym
-      sn = nil
-      sn = self.simple_name if self.respond_to? :simple_name
-      sn.downcase.to_sym if sn
+      self.class.simple_name.downcase.to_sym
     end
 
     def default_indicator
-      sn = nil
-      sn = self.simple_name if self.respond_to? :simple_name
-      sn[0].upcase if sn
+      self.class.simple_name[0].upcase
     end
 
     def key
@@ -24,46 +26,21 @@ module CLI
   end
 
   class Yes
-    include SymbolProvider
-
-    def simple_name
-      "Yes"
-    end
-
-    def to_i
-      1
-    end
-
+    include OptionHelper
+    
     def !
       NO
     end
   end
   class No
-    include SymbolProvider
-
-    def simple_name
-      "No"
-    end
-
-    def to_i
-      0
-    end
-
+    include OptionHelper
     def !
       YES
     end
   end
 
   class Cancel
-    include SymbolProvider
-
-    def simple_name
-      "Cancel"
-    end
-
-    def to_i
-      -1
-    end
+    include OptionHelper
   end
   YES    = Yes.new
   NO     = No.new
@@ -72,22 +49,7 @@ module CLI
   class YesNo
     DEFAULT_PROMPT = "Do you want to proceed?"
 
-    def self.yes_by_default(prompt, io)
-      yes_or_no(YES, prompt, true)
-    end
-    def self.yes_by_default
-      yes_or_no(YES, DEFAULT_PROMPT, true)
-    end
-
-    def self.no_by_default(prompt)
-      yes_or_no(NO, prompt, true)
-    end
-
-    def self.no_by_default
-      yes_or_no(NO, DEFAULT_PROMPT, true)      
-    end
-
-    def initialize(default_option, prompt, strict)
+    def initialize(default_option=YES, prompt=DEFAULT_PROMPT, strict=true)
       @default_option = default_option
       @prompt         = prompt
       @strict         = strict
@@ -122,48 +84,29 @@ module CLI
       chosen   = valid_response? response
       if @strict
         until chosen
-          print "\n#{response} is invalid, #{@prompt} #{format}"
+          print "\nSorry, I don't understand #{response}, #{@prompt} #{format}"
           response = gets.chomp!
           chosen   = valid_response? response
         end
       else
-        chosen = @other_options[0] # some random option will be returne, works as expected in YesNo case
+        chosen = @other_options[0] # some random option will be returned, works as expected in YesNo case
       end
       chosen
-    end
-
-    private
-    def self.yes_or_no(default_option, prompt, strict)
-      YesNo.new(default_option, prompt, strict)
     end
   end
 
   class YesNoCancel < YesNo
-    def self.yes_by_default
-      yes_or_no_or_cancel(YES, DEFAULT_PROMPT, true)
-    end
-    def self.no_by_default
-      yes_or_no_or_cancel(NO, DEFAULT_PROMPT, true)
-    end
-    def self.cancel_by_default
-      yes_or_no_or_cancel(CANCEL, DEFAULT_PROMPT, true)
-    end
-
-    def initialize(default_option, prompt, strict)
+    def initialize(default_option=YES, prompt=DEFAULT_PROMPT, strict=true)
       @default_option = default_option
       @prompt = prompt
       @strict = strict
       @other_options = YNC - [@default_option]
     end
-    private
-    def self.yes_or_no_or_cancel(default_option, prompt, strict)
-      YesNoCancel.new(default_option, prompt, strict)
-    end
   end
 end
-#yn = CLI::YesNo.yes_by_default
-#r = yn.run
-#puts r
-#ync = CLI::YesNoCancel.yes_by_default
-#r = ync.run
-#puts r
+yn = CLI::YesNo.new
+r = yn.run
+puts r
+ync = CLI::YesNoCancel.new
+r = ync.run
+puts r
