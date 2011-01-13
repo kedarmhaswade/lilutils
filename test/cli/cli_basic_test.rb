@@ -17,14 +17,27 @@ class BasicCLITest < Test::Unit::TestCase
     # Do nothing
   end
 
-  def test_symbols
-    assert_equal(:yes, CLI::Yes.new.to_sym)
-    assert_equal(:no, CLI::No.new.to_sym)
-    assert_equal(:cancel, CLI::Cancel.new.to_sym)
+  def test_yes_no
+    is = StringIO.open("y\n", "r")
+    os = StringIO.open("", "w")
+    yes = CLI::YesNo.new(CLI::YES, CLI::YesNo::DEFAULT_PROMPT, true, is, os)
+    assert_equal(CLI::YES, yes.run)
+
+    is = StringIO.open("\n", "r") # just enter a newline character
+    no = CLI::YesNo.new(CLI::NO, CLI::YesNo::DEFAULT_PROMPT, true, is, os)
+    assert_equal(CLI::NO, no.run)
+
+    is = StringIO.open("c\n", "r") # invalid character
+    no = CLI::YesNo.new(CLI::NO, CLI::YesNo::DEFAULT_PROMPT, false, is, os) # we must not be strict here
+    assert_equal(CLI::NO, no.run) # default should prevail as 'c' is not recognized
+
+    is = StringIO.open("go away\nz\n\n", "r") # 2 invalid attempts and then a valid attempt to select the default
+    no = CLI::YesNo.new(CLI::NO, CLI::YesNo::DEFAULT_PROMPT, false, is, os) # we must not be strict here
+    assert_equal(CLI::NO, no.run) # default should prevail as we encounter a mere newline
+
   end
 
-#  def test_yes_no_1
-#    yes_by_default = CLI::YesNo.yes_by_default
-#    assert_equal(CLI::YES, yes_by_default.run)
-#  end
+  def test_yes_no_cancel
+
+  end
 end
