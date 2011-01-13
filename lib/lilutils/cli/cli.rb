@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 
 module CLI
-  # constant definitions first
-  # use the following as singletons
   module SymbolProvider
     def to_sym
       sn = nil
@@ -13,7 +11,7 @@ module CLI
     def default_indicator
       sn = nil
       sn = self.simple_name if self.respond_to? :simple_name
-      sn[0].upcase
+      sn[0].upcase if sn
     end
 
     def key
@@ -70,15 +68,15 @@ module CLI
   YES    = Yes.new
   NO     = No.new
   CANCEL = Cancel.new
-
+  YNC    = [YES, NO, CANCEL]
   class YesNo
-    DEFAULT_YES_NO_PROMPT = "Do you want to proceed?"
+    DEFAULT_PROMPT = "Do you want to proceed?"
 
     def self.yes_by_default(prompt, io)
       yes_or_no(YES, prompt, true)
     end
     def self.yes_by_default
-      yes_or_no(YES, DEFAULT_YES_NO_PROMPT, true)
+      yes_or_no(YES, DEFAULT_PROMPT, true)
     end
 
     def self.no_by_default(prompt)
@@ -86,39 +84,50 @@ module CLI
     end
 
     def self.no_by_default
-      yes_or_no(NO, DEFAULT_YES_NO_PROMPT, true)      
+      yes_or_no(NO, DEFAULT_PROMPT, true)      
     end
 
     def initialize(default_option, prompt, strict)
       @default_option = default_option
       @prompt         = prompt
       @strict         = strict
+      @other_options  = []
+      @other_options << !default_option
     end
 
     def options
-      [YES, NO]
+      [@default_option] + @other_options
     end
 
     def valid_response?(r)
       options.each do |option|
-        return option if option.valid_response? r
+        return option if (option == @default_option && r == "") || (option.valid_response? r)
       end
       nil
     end
 
+    # subclasses may override, but don't have to
+    def format 
+      form = "%s" % [@default_option.default_indicator]
+      @other_options.each do |opt|
+        form += "/%s" % opt.key
+      end
+      "[#{form}] "
+    end
+
+    # the whole point is subclasses get this for free
     def run
-      form = "[%s/%s]" % [@default_option.default_indicator, (!@default_option).key]
-      print "#{@prompt} #{form}"
+      print "#{@prompt} #{format}"
       response = gets.chomp!
       chosen   = valid_response? response
       if @strict
         until chosen
-          print "\n#{response}, Huh? #{@prompt} #{form}"
+          print "\n#{response} is invalid, #{@prompt} #{format}"
           response = gets.chomp!
           chosen   = valid_response? response
         end
       else
-        chosen = !@default_option
+        chosen = @other_options[0] # some random option will be returne, works as expected in YesNo case
       end
       chosen
     end
@@ -128,7 +137,33 @@ module CLI
       YesNo.new(default_option, prompt, strict)
     end
   end
+
+  class YesNoCancel < YesNo
+    def self.yes_by_default
+      yes_or_no_or_cancel(YES, DEFAULT_PROMPT, true)
+    end
+    def self.no_by_default
+      yes_or_no_or_cancel(NO, DEFAULT_PROMPT, true)
+    end
+    def self.cancel_by_default
+      yes_or_no_or_cancel(CANCEL, DEFAULT_PROMPT, true)
+    end
+
+    def initialize(default_option, prompt, strict)
+      @default_option = default_option
+      @prompt = prompt
+      @strict = strict
+      @other_options = YNC - [@default_option]
+    end
+    private
+    def self.yes_or_no_or_cancel(default_option, prompt, strict)
+      YesNoCancel.new(default_option, prompt, strict)
+    end
+  end
 end
 #yn = CLI::YesNo.yes_by_default
 #r = yn.run
+#puts r
+#ync = CLI::YesNoCancel.yes_by_default
+#r = ync.run
 #puts r
