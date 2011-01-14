@@ -12,58 +12,98 @@ end
 # The main module
 # Provides functionality to interact with users on a <i> command line </i>
 module CLI
-  # A (sub) module that is used as a mixin to define the functionality of options. An option is generally
-  # recognized by a (lower-case) ASCII character (Yes, not caring for multibyte characters at the moment).
-  module OptionHelper
-    # Indicates that the option is the default one.
-    # @return [String] a character in upper case suggesting that that option is the default (e.g. 'Y' for YES)
-    def default_indicator
-      self.class.simple_name[0].upcase
-    end
 
-    # Indicates the ASCII key that represents this option. This is always lower case.
-    # @return [String] a character in lower case identifying an option
-    def key
-      default_indicator.downcase
-    end
-
-    # Decides whether the response is valid. A response is valid only if it is equal (==) to the key.
-    # @return true if it's a valid response, false otherwise
-    def valid_response?(r)
-       r == key
-    end
-  end
-
-  # Marker class for an option
+  # Denotes an arbitrary option.
   class Option
+    attr_reader :name
+    # constructs this option with a name. The first character of this is regarded its key, e.g. "Yes" and 'y'.
+    # Unless an option has a proper name (e.g. "Mozart"), do not use the default value of the parameter
+    def initialize(name=self.class.simple_name)
+      @name = name.capitalize
+      @name.freeze
+    end
+
+    def ==(other)
+      (other.is_a? Option) && (@name == other.name)
+    end
+
+    def to_s
+      @name
+    end
+
+    def key
+      @name[0].downcase
+    end
   end
   # The class that identifies a user "Yes".
   class Yes < Option
-    include OptionHelper
-    def !
-      NO
-    end
   end
 
   # The class that identifies a user "No".
   class No < Option
-    include OptionHelper
-    def !
-      YES
-    end
   end
 
   # The class that identifies a user "Cancel".
   class Cancel < Option
-    include OptionHelper
   end
 
   # Singletons
   YES    = Yes.new
   NO     = No.new
   CANCEL = Cancel.new
-  YNC    = [YES, NO, CANCEL]
+  YN     = [YES, NO]
+  YNC    = YN << CANCEL
 
+  class OptionList
+    DEFAULT_PROMPT = "Do you want to proceed?"
+
+    def initialize(options, default_option_index, prompt, strict, istream=$stdin, ostream=$stdout)
+      # check, list must be non-nil and must have at least two elements
+      raise ArgumentError if options.nil? || options.size < 2
+      @options        = options
+      @default_option = options[default_option_index]
+      @prompt         = prompt
+      @strict         = strict
+      @istream        = istream
+      @ostream        = ostream
+    end
+
+    def valid_response?(r)
+      @options.each do |option|
+        return option if (option == @default_option && r == "") || (option.key == r)
+      end
+      nil
+    end
+
+    # subclasses may override, but don't have to
+    def display_string
+      long_str = ""
+      @options.each_with_index do |opt, index|
+        str = opt.key
+        str = str.upcase if opt == @default_option
+        long_str << str
+        long_str << "/" if index < (@options.size-1)
+      end
+      "#{@prompt} [#{long_str}] "
+    end
+
+    # the whole point is subclasses get this for free
+    def show
+      @ostream.print "#{display_string}"
+      response = @istream.gets.chomp!
+      chosen   = valid_response? response
+      if @strict
+        until chosen
+          @ostream.print "\nSorry, I don't understand #{response}, #{@prompt} #{display_string}"
+          response = @istream.gets.chomp!
+          chosen   = valid_response? response
+        end
+      else
+        chosen = @default_option # when not strict, any key => default option
+      end
+      chosen
+    end
+  end
   # A class that models the simple yes/no interaction with user on command line. Provides several ways to customize.
   # @example:
   # ...
@@ -74,9 +114,7 @@ module CLI
   # the default option is. Note that the default option is shown as upper case key.
   # @see CLI#YES
   # @see #NO
-  class YesNo
-    DEFAULT_PROMPT = "Do you want to proceed?"
-
+  class YesNo < OptionList
     # Creates a YesNo interaction.
     # @param [Option] default_option the option that should be treated as default. Its default is #YES :-)
     # @param [String] prompt prompt that should appear. Default is #DEFAULT_PROMPT
@@ -84,69 +122,18 @@ module CLI
     # @param [IO] istream input stream to read user response from
     # @param [IO] ostream output stream to display output to
     def initialize(default_option=YES, prompt=DEFAULT_PROMPT, strict=true, istream=$stdin, ostream=$stdout)
-      @default_option = default_option
-      @prompt         = prompt
-      @strict         = strict
-      @istream        = istream
-      @ostream        = ostream
-      @other_options  = [!default_option]
+      super(YN, YN.index(default_option), prompt, strict, istream, ostream)
     end
 
-    def options
-      [@default_option] + @other_options
-    end
-
-    def valid_response?(r)
-      options.each do |option|
-        return option if (option == @default_option && r == "") || (option.valid_response? r)
-      end
-      nil
-    end
-
-    # subclasses may override, but don't have to
-    def format
-      form = "%s" % [@default_option.default_indicator]
-      @other_options.each do |opt|
-        form += "/%s" % opt.key
-      end
-      "[#{form}] "
-    end
-
-    # the whole point is subclasses get this for free
-    def run
-      @ostream.print "#{@prompt} #{format}"
-      response = @istream.gets.chomp!
-      chosen   = valid_response? response
-      if @strict
-        until chosen
-          @ostream.print "\nSorry, I don't understand #{response}, #{@prompt} #{format}"
-          response = @istream.gets.chomp!
-          chosen   = valid_response? response
-        end
-      else
-        chosen = @default_option # when not strict, any key => default option
-      end
-      chosen
-    end
   end
 
-  class YesNoCancel < YesNo
+  class YesNoCancel < OptionList
     def initialize(default_option=YES, prompt=DEFAULT_PROMPT, strict=true, istream=$stdin, ostream=$stdout)
-      @default_option = default_option
-      @prompt         = prompt
-      @strict         = strict
-      @istream        = istream
-      @ostream        = ostream
-      @other_options  = YNC - [@default_option]
+      super(YNC, YNC.index(default_option), prompt, strict, istream, ostream)
     end
   end
 end
-#yn = CLI::YesNo.new
-#r = yn.run
-#puts r
-#yn = CLI::YesNo.new(CLI::NO)
-#r = yn.run
-#puts r
-#ync = CLI::YesNoCancel.new
-#r = ync.run
-#puts r
+#puts CLI::YesNo.new.show
+#puts CLI::YesNo.new(CLI::NO).show
+#puts CLI::YesNoCancel.new.show
+#puts CLI::OptionList.new([CLI::Option.new("Mozart"), CLI::Option.new("Beethoven")], 1, "Pick your pick: ", true).show

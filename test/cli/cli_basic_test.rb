@@ -18,26 +18,65 @@ class BasicCLITest < Test::Unit::TestCase
   end
 
   def test_yes_no
-    is = StringIO.open("y\n", "r")
-    os = StringIO.open("", "w")
+    is  = StringIO.open("y\n", "r")
+    os  = StringIO.open("", "w")
     yes = CLI::YesNo.new(CLI::YES, CLI::YesNo::DEFAULT_PROMPT, true, is, os)
-    assert_equal(CLI::YES, yes.run)
+    assert_equal(CLI::YES, yes.show)
 
     is = StringIO.open("\n", "r") # just enter a newline character
     no = CLI::YesNo.new(CLI::NO, CLI::YesNo::DEFAULT_PROMPT, true, is, os)
-    assert_equal(CLI::NO, no.run)
+    assert_equal(CLI::NO, no.show)
 
     is = StringIO.open("c\n", "r") # invalid character
     no = CLI::YesNo.new(CLI::NO, CLI::YesNo::DEFAULT_PROMPT, false, is, os) # we must not be strict here
-    assert_equal(CLI::NO, no.run) # default should prevail as 'c' is not recognized
+    assert_equal(CLI::NO, no.show) # default should prevail as 'c' is not recognized
 
     is = StringIO.open("go away\nz\n\n", "r") # 2 invalid attempts and then a valid attempt to select the default
     no = CLI::YesNo.new(CLI::NO, CLI::YesNo::DEFAULT_PROMPT, false, is, os) # we must not be strict here
-    assert_equal(CLI::NO, no.run) # default should prevail as we encounter a mere newline
-
+    assert_equal(CLI::NO, no.show) # default should prevail as we encounter a mere newline
+    is.close
+    os.close
   end
 
   def test_yes_no_cancel
+    is = StringIO.open("", "r")
+    os = StringIO.open("", "w")
+    CLI::YNC.each do |option|
+      is  = StringIO.open("#{option.key}\n", "r")
+      ync = CLI::YesNoCancel.new(option, "test", true, is, os)
+      assert_equal(option, ync.show)
+    end
+    CLI::YNC.each do |option|
+      is  = StringIO.open("\n", "r") # default option matches a mere Enter
+      ync = CLI::YesNoCancel.new(option, "test", true, is, os)
+      assert_equal(option, ync.show)
+    end
+    is.close
+    os.close
+  end
 
+  def test_display_string
+    prompt  = "Pick one: "
+    options = []
+    options << CLI::Option.new("Coffee") << CLI::Option.new("Tea") << CLI::Option.new("Milk")
+    # make Tea the default
+    list     = CLI::OptionList.new(options, 1, prompt, true)
+    expected = prompt + " [c/T/m] "
+    assert_equal(expected, list.display_string)
+  end
+
+  def test_generic_1
+    os       = StringIO.open("", "w")
+    cat      = CLI::Option.new("cat")
+    dog      = CLI::Option.new("dog")
+    elephant = CLI::Option.new("elephant")
+    frog     = CLI::Option.new("frog")
+
+    is       = StringIO.open("z\ne\n", "r") # choose invalid option and then elephant
+    list = CLI::OptionList.new([cat, dog, elephant, frog], 3, "", true, is, os)  # make frog the default
+    assert_equal(elephant, list.show)
+
+    is.close
+    os.close
   end
 end
