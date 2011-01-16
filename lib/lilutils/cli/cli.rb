@@ -27,6 +27,18 @@ module CLI
       (other.is_a? Option) && (@name == other.name)
     end
 
+    def valid_response(r)
+      key == r
+    end
+
+    def as_default
+      key.upcase
+    end
+
+    def as_non_default
+      key
+    end
+
     def to_s
       @name
     end
@@ -70,7 +82,7 @@ module CLI
 
     def valid_response?(r)
       @options.each do |option|
-        return option if (option == @default_option && r == "") || (option.key == r)
+        return option if (option == @default_option && r == "") || (option.valid_response(r))
       end
       nil
     end
@@ -78,10 +90,12 @@ module CLI
     # subclasses may override, but don't have to
     def display_string
       long_str = ""
-      @options.each_with_index do |opt, index|
-        str = opt.key
-        str = str.upcase if opt == @default_option
-        long_str << str
+      @options.each_with_index do |option, index|
+        if option == @default_option
+          long_str << option.as_default
+        else
+          long_str << option.as_non_default
+        end
         long_str << "/" if index < (@options.size-1)
       end
       "#{@prompt} [#{long_str}] "
