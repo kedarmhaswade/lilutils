@@ -79,4 +79,18 @@ class BasicCLITest < Test::Unit::TestCase
     is.close
     os.close
   end
+  
+  def test_numbers_1
+    os       = StringIO.open("", "w")
+    latte    = CLI::NumberedOption.new(1, "Latte")
+    mocha    = CLI::NumberedOption.new(2, "Mocha")
+    chai     = CLI::NumberedOption.new(3, "Chai")
+    machiato = CLI::NumberedOption.new(4, "Caramel Machiato")
+    is       = StringIO.open("3\n", "r") # choose Chai
+    list     = CLI::NumberedOptions.new([latte, mocha, chai, machiato], 0, "Pick your favorite: ", true, is, os) # make latte the default
+    assert_equal(chai, list.show)
+    
+    is.close
+    os.close
+  end
 end

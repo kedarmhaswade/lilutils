@@ -59,6 +59,34 @@ module CLI
   class Cancel < Option
   end
 
+  # An option with a name and a positive number used to identify its selection
+  class NumberedOption < Option
+    attr_reader :number
+    def initialize(number, name)
+      super(name)
+      @number = number
+    end
+    # redefine
+    def ==(other)
+      @name == other.name  && @number == other.number
+    end
+    # redefine
+    def valid_response(r)
+      @number.to_s == r
+    end
+    # redefine
+    def as_default
+      "*#{@name} (#{@number})*"
+    end
+    # redefine
+    def as_non_default
+      "#{@name} (#{@number})"
+    end
+    def to_s
+      "#{@name}, #{number}"
+    end
+  end
+
   # Singletons
   YES    = Yes.new
   NO     = No.new
@@ -82,6 +110,7 @@ module CLI
 
     def valid_response?(r)
       @options.each do |option|
+        debug "#{option} == #{@default_option} ? : (#{option == @default_option})"
         return option if (option == @default_option && r == "") || (option.valid_response(r))
       end
       nil
@@ -117,6 +146,10 @@ module CLI
       end
       chosen
     end
+
+    def debug(str)
+      puts "debug: #{str}" if $DEBUG
+    end
   end
   # A class that models the simple yes/no interaction with user on command line. Provides several ways to customize.
   # @example:
@@ -146,8 +179,18 @@ module CLI
       super(YNC, YNC.index(default_option), prompt, strict, istream, ostream)
     end
   end
+  class NumberedOptions < OptionList
+    def initialize(options, default_option_index, prompt, strict, istream=$stdin, ostream=$stdout)
+      # all the options must be NumberedOption instances
+      super
+    end
+  end
 end
 #puts CLI::YesNo.new.show
 #puts CLI::YesNo.new(CLI::NO).show
 #puts CLI::YesNoCancel.new.show
 #puts CLI::OptionList.new([CLI::Option.new("Mozart"), CLI::Option.new("Beethoven")], 1, "Pick your pick: ", true).show
+#one = CLI::NumberedOption.new(1, "Standard")
+#two = CLI::NumberedOption.new(2, "Expedite")
+#three = CLI::NumberedOption.new(3, "Special")
+#puts CLI::NumberedOptions.new([one, two, three], 0, "Select shipping method: ", true).show
