@@ -4,6 +4,11 @@ PostInstall.txt
 README.rdoc
 Rakefile
 lib/lilutils.rb
+lib/lilutils/cli_entry.rb
+lib/lilutils/misc_entry.rb
+lib/lilutils/cli/cli.rb
+lib/lilutils/misc/misc.rb
+bin/cli-demo
 script/console
 script/destroy
 script/generate

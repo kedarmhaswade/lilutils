@@ -1,26 +1,29 @@
 = lilutils
 
-* http://github.com/#{github_username}/#{project_name}
+* http://github.com:kedarmhaswade/lilutils.git
 
 == DESCRIPTION:
 
-FIX (describe your package)
+Provides little utilities that are mainly intended for myself. Maybe someone else would find them useful?
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+* Provides a CLI module which provides a general purpose selection interface for command line interface.
+
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+require 'lilutils/cli'
+yn = YesNo.new
+puts "You chose: #{yn.show}"
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* Ruby 1.9.2
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* [sudo] gem install lilutils
 
 == LICENSE:
 

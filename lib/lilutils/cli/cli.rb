@@ -1,5 +1,3 @@
-#!/usr/bin/env ruby
-
 # Adds the simple_name method to Module.
 # @note A simple_name is just the name of the class/module without encompassing modules
 class Module
@@ -92,14 +90,13 @@ module CLI
   NO     = No.new
   CANCEL = Cancel.new
   YN     = [YES, NO]
-  YNC    = YN << CANCEL
+  YNC    = YN + [CANCEL]
 
   class OptionList
     DEFAULT_PROMPT = "Do you want to proceed?"
 
     def initialize(options, default_option_index, prompt, strict, istream=$stdin, ostream=$stdout)
       # check, list must be non-nil and must have at least two elements
-      raise ArgumentError if options.nil? || options.size < 2
       @options        = options
       @default_option = options[default_option_index]
       @prompt         = prompt
