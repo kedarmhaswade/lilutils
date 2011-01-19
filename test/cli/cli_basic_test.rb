@@ -58,7 +58,7 @@ class BasicCLITest < Test::Unit::TestCase
   def test_display_string
     prompt  = "Pick one: "
     options = []
-    options << CLI::Option.new("Coffee") << CLI::Option.new("Tea") << CLI::Option.new("Milk")
+    options << CLI::SingleLetterOption.new("Coffee") << CLI::SingleLetterOption.new("Tea") << CLI::SingleLetterOption.new("Milk")
     # make Tea the default
     list     = CLI::OptionList.new(options, 1, prompt, true)
     expected = prompt + " [c/T/m] "
@@ -92,5 +92,34 @@ class BasicCLITest < Test::Unit::TestCase
     
     is.close
     os.close
+  end
+
+  def test_long_names
+    os = StringIO.open("", "w")
+
+    l = CLI::Option.new("Left Turn")
+    r = CLI::Option.new("Right Turn")
+    u = CLI::Option.new("U Turn")
+
+    is = StringIO.open("u\n", "r") # take a U turn
+    message = "What should I do?"
+    list = CLI::OptionList.new([l, r, u], 1, message, true, is, os)
+#    puts list.display_string
+    assert_equal(u, list.show)
+
+    is = StringIO.open("\n", "r") # right turn as default
+    list = CLI::OptionList.new([l, r, u], 1, message, true, is, os)
+    assert_equal(r, list.show) # enter = right
+
+    is = StringIO.open("r\n", "r") # right turn explicit
+    list = CLI::OptionList.new([l, r, u], 1, message, true, is, os)
+    assert_equal(r, list.show) # right turn selected
+
+    is = StringIO.open("e\nl\n", "r") # invalid and then left
+    list = CLI::OptionList.new([l, r, u], 1, message, true, is, os)
+    assert_equal(l, list.show) # left
+
+    expected_display_string = "#{message} [Left turn (l)/*Right turn (r)*/U turn (u)] "
+    assert_equal(expected_display_string, list.display_string)
   end
 end

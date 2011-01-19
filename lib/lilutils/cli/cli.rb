@@ -30,11 +30,11 @@ module CLI
     end
 
     def as_default
-      key.upcase
+      "*#{@name} (#{key})*"
     end
 
     def as_non_default
-      key
+      "#{@name} (#{key})"
     end
 
     def to_s
@@ -45,16 +45,25 @@ module CLI
       @name[0].downcase
     end
   end
+  class SingleLetterOption < Option
+    def as_default
+      key.upcase
+    end
+
+    def as_non_default
+      key
+    end
+  end
   # The class that identifies a user "Yes".
-  class Yes < Option
+  class Yes < SingleLetterOption
   end
 
   # The class that identifies a user "No".
-  class No < Option
+  class No < SingleLetterOption
   end
 
   # The class that identifies a user "Cancel".
-  class Cancel < Option
+  class Cancel < SingleLetterOption
   end
 
   # An option with a name and a positive number used to identify its selection

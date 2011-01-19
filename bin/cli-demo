@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require 'lilutils/cli/cli.rb'
+require File.dirname(__FILE__) + "/../lib/lilutils/cli/cli.rb"
 yn = CLI::NumberedOption.new(1, "Yes/No")
 ync = CLI::NumberedOption.new(2, "Yes/No/Cancel")
 list = CLI::NumberedOptions.new([yn, ync], 0, "Pick your pick for the demo: ", true)
