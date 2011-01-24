@@ -143,7 +143,7 @@ module CLI
       chosen   = valid_response? response
       if @strict
         until chosen
-          @ostream.print "\nSorry, I don't understand #{response}, #{@prompt} #{display_string}"
+          @ostream.print "\nSorry, I don't understand #{response}, #{display_string}"
           response = @istream.gets.chomp!
           chosen   = valid_response? response
         end
