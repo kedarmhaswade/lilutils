@@ -14,7 +14,9 @@ Provides little utilities that are mainly intended for myself. Maybe someone els
 == SYNOPSIS:
 
 require 'lilutils/cli'
+
 yn = YesNo.new
+
 puts "You chose: #{yn.show}"
 
 == REQUIREMENTS:
