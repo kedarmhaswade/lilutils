@@ -1,7 +1,7 @@
 # Provides for code useful to test algorithms, do benchmarks etc. For example, you might be testing a sorting algorithm
 # and need 100_000 or 1_000_000 randomly generated (supposedly unsorted) strings. Of course, you are not going to test
 # your algorithm with ten or hundred strings or numbers, right?
-module AlgoTestUtils
+module DataSets
   ALPHABET = ('a'..'z').to_a + ('0'..'9').to_a
   SIZE = ALPHABET.length
 
@@ -41,4 +41,5 @@ module AlgoTestUtils
   end
 end
 
-puts AlgoTestUtils.ascii_strings(ARGV[0].to_i).sort
+# Example:
+# puts DataSets.ascii_strings(ARGV[0].to_i).sort
