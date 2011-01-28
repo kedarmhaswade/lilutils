@@ -14,8 +14,12 @@ Provides little utilities that are mainly intended for myself. Maybe someone els
 == SYNOPSIS:
 
 require 'lilutils/cli'
+
 yn = YesNo.new
+
 puts "You chose: #{yn.show}"
+
+See bin/cli-demo after the gem is installed.
 
 == REQUIREMENTS:
 
@@ -29,7 +33,7 @@ puts "You chose: #{yn.show}"
 
 (The MIT License)
 
-Copyright (c) 2011 FIXME full name
+Copyright (c) 2011 Kedar Mhaswade
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
