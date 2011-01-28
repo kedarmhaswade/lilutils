@@ -186,9 +186,16 @@ module CLI
     end
   end
   class NumberedOptions < OptionList
-    def initialize(options, default_option_index, prompt, strict, istream=$stdin, ostream=$stdout)
-      # all the options must be NumberedOption instances
+  # all the options must be NumberedOption instances
+  def initialize(options, default_option_index, prompt, strict, istream=$stdin, ostream=$stdout)
       super
+    end
+  end
+
+  class NamedArguments
+    def initialize(defaults={}, delimiter)
+      @defaults = defaults
+      @delimiter = delimiter
     end
   end
 end
