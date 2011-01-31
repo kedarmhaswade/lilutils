@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+require File.dirname(__FILE__) + "/../lib/lilutils/cli/cli.rb"
+yn = CLI::NumberedOption.new(1, "Yes/No")
+ync = CLI::NumberedOption.new(2, "Yes/No/Cancel")
+list = CLI::NumberedOptions.new([yn, ync], 0, "Pick your pick for the demo: ", true)
+puts "You chose: #{list.show}"
+puts "Now opposite of the above"
+list = CLI::NumberedOptions.new([yn, ync], 1, "Just press Enter to see what happens", true)
+puts "You chose: #{list.show}"
+puts "Now special case of the above"
+yes_no = CLI::YesNo.new
+puts "You chose: #{yes_no.show}"
+puts "Liked it? Then use it!"
+sc = CLI::Option.new("Show code")
+ex = CLI::Option.new("Just exit")
+yn = CLI::OptionList.new([sc, ex], 0, "What do you want me to do?", true)
+choice = yn.show
+if choice == sc # show me code
+  puts "-----------------------------------------------------------------------"
+  File.open(__FILE__, "r") do |f|
+    f.readlines.each do |line|
+      puts line
+    end
+  puts "-----------------------------------------------------------------------"
+  end
+elsif choice == ex # just exit
+  puts "Bye!"
+  exit 0
+else
+  puts "Impossible!"
+end
+
