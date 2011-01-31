@@ -15,6 +15,7 @@ module DataSets
   # argument, howmany, such that the length is enough to generate strings from the
   # entire ALPHABET.
   def self.ascii_strings(howmany, *rest)
+    p howmany, rest if $DEBUG
     raise ArgumentError, "Size must be positive" if howmany < 1
     srand(Time.now.to_i)
     strings = []
@@ -48,5 +49,5 @@ module DataSets
 end
 
 # Example:
-puts DataSets.ascii_strings(ARGV[0].to_i).sort
-puts DataSets.ascii_strings(ARGV[0].to_i, 10).sort
+puts DataSets.ascii_strings(10).sort
+puts DataSets.ascii_strings(100, 10).sort
