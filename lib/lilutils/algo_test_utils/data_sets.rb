@@ -7,13 +7,19 @@ module DataSets
 
   # Returns random strings of <b> equal length </b>.
   # The length of each string is determined by the parameter passed.
-  # The characters that can 
-  def self.ascii_strings(size)
-    raise ArgumentError, "Size must be positive" if size < 1
+  # The characters that can appear in returned strings are defined by
+  # the {#ALPHABET}. 
+  # @param howmany [Integer] How many random strings do you need?
+  # @param rest [Integer] Optional arguments. First argument should be the length of
+  # each string in returned set. If unspecified, this is calculated from first
+  # argument, howmany, such that the length is enough to generate strings from the
+  # entire ALPHABET.
+  def self.ascii_strings(howmany, *rest)
+    raise ArgumentError, "Size must be positive" if howmany < 1
     srand(Time.now.to_i)
     strings = []
-    of_length = get_string_length_for(size)
-    1.upto size do
+    of_length = rest[0] ? rest[0] : get_string_length_for(howmany)
+    1.upto howmany do
       strings << get_ascii_string(of_length)
     end
     strings
@@ -42,4 +48,5 @@ module DataSets
 end
 
 # Example:
-# puts DataSets.ascii_strings(ARGV[0].to_i).sort
+puts DataSets.ascii_strings(ARGV[0].to_i).sort
+puts DataSets.ascii_strings(ARGV[0].to_i, 10).sort
