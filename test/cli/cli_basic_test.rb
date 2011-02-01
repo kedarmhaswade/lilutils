@@ -1,9 +1,10 @@
 require "test/unit"
-require File.dirname(__FILE__) + '/../../lib/lilutils/cli/cli.rb'
+require File.dirname(__FILE__) + '/../../lib/lilutils'
 require 'stringio'
 
 class BasicCLITest < Test::Unit::TestCase
 
+  CLI = LilUtils::CLI
   # Called before every test method runs. Can be used
   # to set up fixture information.
   def setup
