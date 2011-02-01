@@ -18,7 +18,7 @@ module LilUtils
       # entire ALPHABET.
       def self.ascii_strings(howmany, *rest)
         p howmany, rest if $DEBUG
-        raise ArgumentError, "Size must be positive" if howmany < 1
+        raise ArgumentError, "Size must be positive integer" if howmany < 1
         srand(Time.now.to_i)
         strings = []
         of_length = rest[0] ? rest[0] : get_string_length_for(howmany)
