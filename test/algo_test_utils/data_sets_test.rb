@@ -1,22 +1,12 @@
 require "test/unit"
+require "lilutils/algo_test_utils/data_sets"
 
 class DataSetsTest < Test::Unit::TestCase
 
-  DataSets =
-  # Called before every test method runs. Can be used
-  # to set up fixture information.
-  def setup
-    # Do nothing
-  end
-
-  # Called after every test method runs. Can be used to tear
-  # down fixture information.
-
-  def teardown
-    # Do nothing
-  end
+  DS = LilUtils::AlgoTestUtils::DataSets
 
   def test_ascii_strings
-    
+    strs = DS.ascii_strings(100, 5)
+    assert_equal(100, strs.size)
   end
 end
