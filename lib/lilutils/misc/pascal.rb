@@ -18,4 +18,4 @@ module LilUtils
     end
   end
 end
-p LilUtils::Misc::Pascal.row(ARGV[0].to_i)
+#p LilUtils::Misc::Pascal.row(ARGV[0].to_i)

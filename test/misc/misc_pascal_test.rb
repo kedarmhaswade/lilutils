@@ -19,9 +19,9 @@ class PascalTest < Test::Unit::TestCase
   end
 
   def test_first_six
-    rows = {1=>[1], 2=>[1, 2, 1], 3=>[1, 3, 3, 1], 4=>[1, 4, 6, 4, 1], 5=>[1, 5, 10, 10, 5, 1], 6=>[1, 6, 15, 20, 15, 6, 1]}
-    p rows
-    rows.each_pair do |row_no, row | 
+    rows = {1 => [1], 2 => [1, 2, 1], 3 => [1, 3, 3, 1], 4 => [1, 4, 6, 4, 1],
+            5 => [1, 5, 10, 10, 5, 1], 6 => [1, 6, 15, 20, 15, 6, 1]}
+    rows.each_pair do |row_no, row |
       assert_equal(row, PASCAL.row(row_no))
     end
   end
