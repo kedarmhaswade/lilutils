@@ -9,8 +9,7 @@ module LilUtils
         raise ArgumentError if !n.is_a?(Integer) || n < 1
         len = n == 1 ? 1 : n + 1
         a = Array.new(len); a[0] = a[-1] = 1
-        r = 1
-        while r <= n/2
+        1.upto n/2 do |r|
           a[r] = a[-r-1] = a[r-1] * (n-r+1)/r
           r += 1
         end
@@ -19,4 +18,4 @@ module LilUtils
     end
   end
 end
-p LilUtils::AlgoTestUtils::Pascal.row(5)
+p LilUtils::AlgoTestUtils::Pascal.row(ARGV[0].to_i)
