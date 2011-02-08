@@ -1,12 +1,12 @@
 module LilUtils
-  module AlgoTestUtils
+  module Misc
     module Pascal
       # Returns the nth row of the Pascal's triangle as an array of n+1 elements.
       # This is an O(n) algorithm. Uses: nCr = nCr-1*(n-r+1)/r which calculates
       # @param [Integer] n starts at 1
       # @return [Array] of Integers representing numbers in given row.
       def self.row(n)
-        raise ArgumentError if !n.is_a?(Integer) || n < 1
+        raise ArgumentError, "#{n} is not valid" if !n.is_a?(Integer) || n < 1
         len = n == 1 ? 1 : n + 1
         a = Array.new(len); a[0] = a[-1] = 1
         1.upto n/2 do |r|
@@ -18,4 +18,4 @@ module LilUtils
     end
   end
 end
-p LilUtils::AlgoTestUtils::Pascal.row(ARGV[0].to_i)
+p LilUtils::Misc::Pascal.row(ARGV[0].to_i)
