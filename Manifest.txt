@@ -9,6 +9,7 @@ lib/lilutils/cli_entry.rb
 lib/lilutils/algo_test_utils/data_sets.rb
 lib/lilutils/algo_test_utils_entry.rb
 lib/lilutils/misc/misc.rb
+lib/lilutils/misc/pascal.rb
 lib/lilutils/misc_entry.rb
 bin/cli-demo
 script/console
@@ -16,3 +17,6 @@ script/destroy
 script/generate
 test/test_helper.rb
 test/test_lilutils.rb
+test/algo_test_utils/data_sets_test.rb
+test/cli/cli_basic_test.rb
+test/misc/misc_pascal_test.rb
