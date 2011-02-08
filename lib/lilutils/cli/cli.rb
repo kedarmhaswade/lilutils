@@ -13,7 +13,11 @@ module LilUtils
 
   module CLI
 
-    # Denotes an arbitrary option.
+    # Models an arbitrary option that user has choice to choose. Every Option has a name and a key.
+    # The name of an Option is its given name capitalized and its key is first character in its name in lower case. For example,
+    # for an option constructed with the string "separate",  the actual name is "Separate" and key is 's'.
+    # Provides behavior for such an Option as far as its display, equality, validity etc. is
+    # concerned.
     class Option
       attr_reader :name
       # constructs this option with a name. The first character of this is regarded its key, e.g. "Yes" and 'y'.
@@ -47,6 +51,8 @@ module LilUtils
         @name[0].downcase
       end
     end
+
+    # Models an Option that is completely specified by a single letter, e.g. "Y"
     class SingleLetterOption < Option
       def as_default
         key.upcase
@@ -56,11 +62,13 @@ module LilUtils
         key
       end
     end
-    # The class that identifies a user "Yes".
+    # The class that identifies a user "Yes". This class is an example of an option where the name of
+    # the option is derived from the name of the class itself. Handy extension.
     class Yes < SingleLetterOption
     end
 
     # The class that identifies a user "No".
+    # @see Yes
     class No < SingleLetterOption
     end
 
@@ -68,7 +76,8 @@ module LilUtils
     class Cancel < SingleLetterOption
     end
 
-    # An option with a name and a positive number used to identify its selection
+    # An Option with a name and a positive number used to identify its selection. This is useful when two
+    # Options start with the same character (e.g. "Chai" and "Coffee")
     class NumberedOption < Option
       attr_reader :number
 
@@ -109,6 +118,9 @@ module LilUtils
     YN     = [YES, NO]
     YNC    = YN + [CANCEL]
 
+    # Models a generic list of options that determines if a particular key results in valid response.
+    # Takes care of generic behavior (display, validity of user response, defaults) when a list of
+    # options is presented to the user.
     class OptionList
       DEFAULT_PROMPT = "Do you want to proceed?"
 
@@ -193,27 +205,22 @@ module LilUtils
         super(YNC, YNC.index(default_option), prompt, strict, istream, ostream)
       end
     end
+    # An OptionList where all the Options are NumberedOptions. You can't mix NumberedOptions with others.
     class NumberedOptions < OptionList
       # all the options must be NumberedOption instances
       def initialize(options, default_option_index, prompt, strict, istream=$stdin, ostream=$stdout)
         super
       end
     end
-
-    class NamedArguments
-      def initialize(defaults={}, delimiter)
-        @defaults  = defaults
-        @delimiter = delimiter
-      end
-    end
   end
 end
 
-#puts LilUtils::CLI::YesNo.new.show
-#puts LilUtils::CLI::YesNo.new(LilUtils::CLI::NO).show
-#puts LilUtils::CLI::YesNoCancel.new.show
-#puts LilUtils::CLI::OptionList.new([LilUtils::CLI::Option.new("Mozart"), LilUtils::CLI::Option.new("Beethoven")], 1, "Pick your pick: ", true).show
-#one = LilUtils::CLI::NumberedOption.new(1, "Standard")
-#two = LilUtils::CLI::NumberedOption.new(2, "Expedite")
-#three = LilUtils::CLI::NumberedOption.new(3, "Special")
-#puts LilUtils::CLI::NumberedOptions.new([one, two, three], 0, "Select shipping method: ", true).show
+#CLI=LilUtils::CLI
+#puts CLI::YesNo.new.show
+#puts CLI::YesNo.new(LilUtils::CLI::NO).show
+#puts CLI::YesNoCancel.new.show
+#puts CLI::OptionList.new([CLI::Option.new("Mozart"), CLI::Option.new("Beethoven")], 1, "Pick your pick: ", true).show
+#one = CLI::NumberedOption.new(1, "Standard")
+#two = CLI::NumberedOption.new(2, "Expedite")
+#three = CLI::NumberedOption.new(3, "Special")
+#puts CLI::NumberedOptions.new([one, two, three], 0, "Select shipping method: ", true).show
