@@ -1,3 +1,7 @@
+=== 0.0.2
+* A new utility added in Misc
+  * Utility to test whether an array is in order. The comparator is defined by the block.
+  * Utility to find out the sandwiching indexes for an element in a given collection that is supposed to be sorted.
 === 0.0.1 2011-02-08
 
 * 1 major enhancement:
