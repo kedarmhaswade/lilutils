@@ -11,8 +11,8 @@ module LilUtils
       # The length of each string is determined by the parameter passed.
       # The characters that can appear in returned strings are defined by
       # the {#ALPHABET}.
-      # @param howmany [Integer] How many random strings do you need?
-      # @param rest [Integer] Optional arguments. First argument should be the length of
+      # @param [Integer] howmany How many random strings do you need?
+      # @param [Integer] rest Optional arguments. First argument should be the length of
       # each string in returned set. If unspecified, this is calculated from first
       # argument, howmany, such that the length is enough to generate strings from the
       # entire ALPHABET.
@@ -26,6 +26,35 @@ module LilUtils
           strings << get_ascii_string(of_length)
         end
         strings
+      end
+
+      # Returns an array of k randomly chosen numbers between [0, n) where each number will be chosen with
+      # equal probability. Note that returned array will be sorted. The algorithm is taken from Jon Bentley's excellent
+      # Programming Pearls. To make the method to what you mean, both select_random(n, k) and select_random(k, n) do
+      # the same thing, i.e. return an array of size k, each element of array is between 0 and n-1.
+      # @param [Integer] k the number of numbers to choose. May not be > n
+      # @param [Integer] n the upper limit, never included in returned array
+      # @return [Array] Integer array of size k such that 0 <= Array[i] < n for all 0 <=i <= k
+      def self.select_random_array(k, n)
+        raise ArgumentError, "k, n should be non-negative" if k < 0 or n < 0
+        k <= n ? (select, remaining = k, n) : (select, remaining = n, k)
+        a = []
+        big = 1 << 32 # 4B is a big number?
+        0.upto(n-1) do |num|
+          return a if select == 0
+          if ((rand(big) % remaining) < select)
+            a << num
+            select -= 1
+          end
+          remaining -= 1
+        end
+        a
+      end
+
+      def self.random_enumerator(k, n, &block)
+        Enumerator.new do |yielder|
+
+        end
       end
 
       private
