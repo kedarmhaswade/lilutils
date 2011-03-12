@@ -21,4 +21,12 @@ class DataSetsTest < Test::Unit::TestCase
     actual = DS.select_random_array(3, 4)
     assert_true(probables.member? actual)
   end
+
+  def test_select_random_array_to_file
+    require 'tmpdir'
+    fn = File.join(Dir.tmpdir, "foo")
+    DS.select_random_array_to_file(1_000, 10_000, fn)
+#    DS.select_random_array_to_file(1_000_000, 10_000_000, fn)
+    File.delete(fn)
+  end
 end

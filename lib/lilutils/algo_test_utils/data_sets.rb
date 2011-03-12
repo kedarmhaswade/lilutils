@@ -35,25 +35,31 @@ module LilUtils
       # @param [Integer] k the number of numbers to choose. May not be > n
       # @param [Integer] n the upper limit, never included in returned array
       # @return [Array] Integer array of size k such that 0 <= Array[i] < n for all 0 <=i <= k
+      # @see #random_enumerator
       def self.select_random_array(k, n)
-        raise ArgumentError, "k, n should be non-negative" if k < 0 or n < 0
-        k <= n ? (select, remaining = k, n) : (select, remaining = n, k)
         a = []
-        big = 1 << 32 # 4B is a big number?
-        0.upto(n-1) do |num|
-          return a if select == 0
-          if ((rand(big) % remaining) < select)
-            a << num
-            select -= 1
-          end
-          remaining -= 1
-        end
+        random_enumerator(k, n).each {|random_selection| a << random_selection}
         a
       end
 
-      def self.random_enumerator(k, n, &block)
-        Enumerator.new do |yielder|
+      def self.select_random_array_to_file(k, n, file)
+        File.open(file, "w") do |f|
+          random_enumerator(k, n).each {|random_selection| f.puts random_selection}
+        end
+      end
 
+      def self.random_enumerator(k, n)
+        k <= n ? (select, remaining = k, n) : (select, remaining = n, k)
+        raise ArgumentError, "k, n should be non-negative" if k < 0 or n < 0
+        Enumerator.new do |yielder|
+          big = 1 << 32 # 4B is a big number?
+          0.upto(n-1) do |num|
+            if ((rand(big) % remaining) < select)
+              yielder.yield num
+              select -= 1
+            end
+            remaining -= 1
+          end
         end
       end
 
