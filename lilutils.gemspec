@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
     "lib/lilutils/misc/misc.rb",
     "lib/lilutils/misc/pascal.rb",
     "lib/lilutils/misc_entry.rb",
+    "lilutils.gemspec",
     "script/console",
     "script/destroy",
     "script/generate",
