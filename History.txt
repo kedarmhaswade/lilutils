@@ -1,7 +1,9 @@
 === 0.0.2
-* A new utility added in Misc
   * Utility to test whether an array is in order. The comparator is defined by the block.
   * Utility to find out the sandwiching indexes for an element in a given collection that is supposed to be sorted.
+  * Utility to generate random strings of specified length.
+  * Utility to generate k integers (each e of which is such that 0 <= e < n) in sorted manner. The recipe is in Jon Bentley's 
+    Programming Pearls.
 === 0.0.1 2011-02-08
 
 * 1 major enhancement:
