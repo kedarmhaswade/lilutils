@@ -13,6 +13,7 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "lilutils"
+  gem.version = "0.0.2"
   gem.homepage = "http://github.com/kedarmhaswade/lilutils"
   gem.license = "MIT"
   gem.summary = %Q{Little utilities for everyone}
