@@ -17,18 +17,23 @@ module LilUtils
       # @raise [ArgumentError] if 0 < i <= n
       def set(i)
         raise ArgumentError, "argument (#{i}) should be between 0 and #{@size}" if i < 0 or i >= @size
-        index = @array[i/BITS_PER_ITEM]
-        @array[index] ||= (1 << (i%BITS_PER_ITEM))
+        @array[get_index(i)] ||= (1 << (i%BITS_PER_ITEM))
       end
 
       def test(i)
         raise ArgumentError, "argument (#{i}) should be between 0 and #{@size}" if i < 0 or i >= @size
-
+        if @array[get_index(i)] & (1 << i%BITS_PER_ITEM)
       end
 
       def clear(i)
         raise ArgumentError, "argument (#{i}) should be between 0 and #{@size}" if i < 0 or i >= @size
+        @array[get_index(i)] &= ~(1 << i%BITS_PER_ITEM)
+      end
 
+      private
+
+      def get_index(i)
+        i/BITS_PER_ITEM
       end
     end
   end
