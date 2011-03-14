@@ -1,3 +1,5 @@
+=== 0.0.3
+  * A Misc Utility to implement the classic bit vector.
 === 0.0.2
   * Utility to test whether an array is in order. The comparator is defined by the block.
   * Utility to find out the sandwiching indexes for an element in a given collection that is supposed to be sorted.
