@@ -20,3 +20,5 @@ test/test_lilutils.rb
 test/algo_test_utils/data_sets_test.rb
 test/cli/cli_basic_test.rb
 test/misc/misc_pascal_test.rb
+test/misc/binary_search_test.rb
+test/misc/bit_vector_test.rb
