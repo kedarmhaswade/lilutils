@@ -24,21 +24,26 @@ module LilUtils
 
       # Tests whether ith bit of this Bit Vector is set
       # @param [Fixnum] i Represents the index of given bit, must be from 0 to @size-1
+      # @return [Fixnum] 1 if ith bit is set, 0 otherwise
       def test(i)
         raise ArgumentError, "argument (#{i}) should be between 0 and #{@size}" if i < 0 or i >= @size
         (@array[get_index(i)] & (1 << (get_shift(i))))>>(get_shift(i))
       end
 
+      # Clears the given bit (i.e. makes it 0).
+      # @param [Fixnum] i Represents the index of given bit, must be from 0 to @size-1
+      # @return nothing
       def clear(i)
         raise ArgumentError, "argument (#{i}) should be between 0 and #{@size}" if i < 0 or i >= @size
         @array[get_index(i)] &= ~(1 << get_shift(i))
       end
 
       private
-
+      # Determines the destination Fixnum who holds this bit.
       def get_index(i)
         i/BITS_PER_ITEM
       end
+      # Returns the <i> offset </i> of the given bit inside a Fixnum
       def get_shift(i)
         i%BITS_PER_ITEM
       end
