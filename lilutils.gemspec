@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{lilutils}
-  s.version = "0.0.2"
+  s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kedar Mhaswade"]
-  s.date = %q{2011-03-12}
+  s.date = %q{2011-05-23}
   s.default_executable = %q{cli-demo}
   s.description = %q{Provides little utilties. It's a gem by a newbie, but I think it is quite useful. As of now, it provides a nicely abstracted out yes/no/cancel dialog box on a console.}
   s.email = %q{kedar.mhaswade@gmail.com}
@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
     "lib/lilutils/cli/cli.rb",
     "lib/lilutils/cli_entry.rb",
     "lib/lilutils/misc/binary_search.rb",
+    "lib/lilutils/misc/bit_vector.rb",
     "lib/lilutils/misc/misc.rb",
     "lib/lilutils/misc/pascal.rb",
     "lib/lilutils/misc_entry.rb",
@@ -43,6 +44,7 @@ Gem::Specification.new do |s|
     "test/algo_test_utils/data_sets_test.rb",
     "test/cli/cli_basic_test.rb",
     "test/misc/binary_search_test.rb",
+    "test/misc/bit_vector_test.rb",
     "test/misc/misc_pascal_test.rb",
     "test/test_helper.rb",
     "test/test_lilutils.rb"
@@ -56,6 +58,7 @@ Gem::Specification.new do |s|
     "test/algo_test_utils/data_sets_test.rb",
     "test/cli/cli_basic_test.rb",
     "test/misc/binary_search_test.rb",
+    "test/misc/bit_vector_test.rb",
     "test/misc/misc_pascal_test.rb",
     "test/test_helper.rb",
     "test/test_lilutils.rb"
@@ -65,20 +68,17 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.2"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_development_dependency(%q<test-unit>, [">= 0"])
     else
-      s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
       s.add_dependency(%q<rcov>, [">= 0"])
       s.add_dependency(%q<test-unit>, [">= 0"])
     end
   else
-    s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
     s.add_dependency(%q<rcov>, [">= 0"])

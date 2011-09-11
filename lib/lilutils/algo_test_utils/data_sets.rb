@@ -69,6 +69,7 @@ module LilUtils
         i = 0
         str = ""
         while i < length
+          srand Time.now.nsec
           str << ALPHABET[rand(SIZE)]
           i += 1
         end

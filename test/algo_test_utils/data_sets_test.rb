@@ -29,4 +29,11 @@ class DataSetsTest < Test::Unit::TestCase
 #    DS.select_random_array_to_file(1_000_000, 10_000_000, fn)
     File.delete(fn)
   end
+
+  def test_random_strings_successive
+    # two successive invocations of ascii_strings should return unique strings, as far as possible
+    f = DS.ascii_strings(1, 30)
+    s = DS.ascii_strings(1, 30)
+    assert_not_equal(f, s)
+  end
 end

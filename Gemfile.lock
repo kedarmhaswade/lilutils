@@ -8,7 +8,6 @@ GEM
       rake
     rake (0.9.2)
     rcov (0.9.9)
-    shoulda (2.11.3)
     test-unit (2.1.2)
 
 PLATFORMS
@@ -19,5 +18,4 @@ DEPENDENCIES
   jeweler (~> 1.5.2)
   rake (>= 0.9.2)
   rcov
-  shoulda
   test-unit
